@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'org.jetbrains.dokka-android'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "com.android.support:appcompat-v7:$support_version"
+
+    api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    api 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+task dokka(overwrite: true, type: org.jetbrains.dokka.gradle.DokkaAndroidTask) {
+    outputFormat = 'html'
+    outputDirectory = '$buildDir/javadoc'
+    // Do not create index pages for empty packages
+    skipEmptyPackages = true
+
+    //Do not output deprecated members. Applies globally, can be overridden by packageOptions
+    skipDeprecated = false
+
+    //No default documentation link to kotlin-stdlib
+    noStdlibLink = false
+}
+
+apply from: 'deploy-retrofit.gradle'
